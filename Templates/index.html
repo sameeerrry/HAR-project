@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HAR Model Demo</title>
+    <style>
+        body {
+            background: #181a20;
+            color: #f1f3f6;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #23262f;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+            padding: 32px 24px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #00e6a8;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+        textarea, select, input[type=file] {
+            width: 100%;
+            margin: 8px 0 16px 0;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            background: #1a1b23;
+            color: #f1f3f6;
+            font-size: 1em;
+        }
+        button {
+            background: #00e6a8;
+            color: #181a20;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 24px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 16px;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #00c291;
+        }
+        pre {
+            background: #15161c;
+            color: #00e6a8;
+            padding: 16px;
+            border-radius: 6px;
+            font-size: 1em;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        .section {
+            margin-bottom: 36px;
+        }
+        .note {
+            color: #c2c8d6;
+            font-size: 0.95em;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HAR Model Demo</h1>
+
+        <div class="section">
+            <h2>Single Sample Prediction</h2>
+            <div class="note">
+                Paste a single feature array (e.g., 561 values for classical models, 1152 for LSTM).<br>
+                Example: <code>[0.1, 0.2, 0.3, ...]</code>
+            </div>
+            <form id="form">
+                <label for="data">Sensor Data (JSON array):</label>
+                <textarea id="data" rows="7" placeholder="[0.1, 0.2, ...]"></textarea>
+                <label for="model">Select Model:</label>
+                <select id="model">
+                    <option value="all">All Models</option>
+                    <option value="decision tree">Decision Tree</option>
+                    <option value="linear svc">Linear SVC</option>
+                    <option value="logistic regression">Logistic Regression</option>
+                    <option value="rbf svm">RBF SVM</option>
+                    <option value="random forest">Random Forest</option>
+                    <option value="lstm">LSTM</option>
+                </select>
+                <button type="submit">Predict</button>
+            </form>
+            <pre id="results"></pre>
+        </div>
+
+        <div class="section">
+            <h2>Batch Prediction (CSV Upload)</h2>
+            <div class="note">
+                Upload a CSV file where each row is a feature array.<br>
+                No header row. Each row: 561 values (classical) or 1152 (LSTM).
+            </div>
+            <form id="csvForm" enctype="multipart/form-data" method="POST">
+                <label for="csvFile">CSV File:</label>
+                <input type="file" id="csvFile" name="file" accept=".csv">
+                <label for="csvModel">Select Model:</label>
+                <select id="csvModel" name="model">
+                    <option value="all">All Models</option>
+                    <option value="decision tree">Decision Tree</option>
+                    <option value="linear svc">Linear SVC</option>
+                    <option value="logistic regression">Logistic Regression</option>
+                    <option value="rbf svm">RBF SVM</option>
+                    <option value="random forest">Random Forest</option>
+                    <option value="lstm">LSTM</option>
+                </select>
+                <button type="submit">Predict CSV</button>
+            </form>
+            <pre id="csvResults"></pre>
+        </div>
+    </div>
+    <script>
+        // Single sample prediction
+        document.getElementById("form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            let features;
+            try {
+                features = JSON.parse(document.getElementById("data").value);
+            } catch {
+                document.getElementById("results").textContent = "Invalid JSON array!";
+                return;
+            }
+            const model = document.getElementById("model").value;
+            const res = await fetch("/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ features, model })
+            });
+            const data = await res.json();
+            document.getElementById("results").textContent = 
+                typeof data === "string" ? data : JSON.stringify(data, null, 2);
+        });
+
+        // CSV batch prediction
+        document.getElementById("csvForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById("csvFile");
+            if (!fileInput.files.length) {
+                document.getElementById("csvResults").textContent = "Please select a CSV file.";
+                return;
+            }
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            formData.append("model", document.getElementById("csvModel").value);
+
+            const res = await fetch("/predict_csv", {
+                method: "POST",
+                body: formData
+            });
+            const data = await res.json();
+            document.getElementById("csvResults").textContent = 
+                Array.isArray(data) ? data.join('\n') : JSON.stringify(data, null, 2);
+        });
+    </script>
+</body>
+</html>
