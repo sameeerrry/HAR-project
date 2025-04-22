@@ -11,12 +11,12 @@ Predict human activities in real time via a clean web interface. 🔍📱
 ## 📜 Table of Contents
 - [✨ Features](#-features)
 - [⚡ Quick Start](#-quick-start)
-- [🕹️ Usage](#-usage)
-- [🏷️ Supported Activities](#-supported-activities)
+- [🕹️ Usage](#usage)
+- [🏷️ Supported Activities](#supported-activities)
 - [📁 Directory Structure](#-directory-structure)
-- [🎯 Markdown Demo](#-markdown-demo)
+- [🎯 Markdown Demo](#markdown-demo)
 - [🧠 Credits](#-credits)
-- [📄 License](#-license)
+
 
 ---
 
@@ -40,6 +40,7 @@ Predict human activities in real time via a clean web interface. 🔍📱
 ---
 
 ## ⚡ Quick Start
+[Dataset Link](https://archive.ics.uci.edu/dataset/240/human+activity+recognition+using+smartphones)
 
 ```bash
 git clone https://github.com/yourusername/your-har-project.git
