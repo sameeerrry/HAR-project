@@ -4,7 +4,8 @@ Smartphone-based recognition of human activities and postural transitions using 
 Built with Flask, scikit-learn, TensorFlow/Keras, and pandas.  
 Predict human activities in real time via a clean web interface. 🔍📱
 
-  ![image](https://github.com/user-attachments/assets/b626224c-6f8c-477f-9896-4ad13744b276)
+  ![image](https://github.com/user-attachments/assets/11c4ac75-6e02-446a-9fd9-33c521c28442)
+  ![image](https://github.com/user-attachments/assets/dbdeb0c4-48df-438e-814e-b169e8c6c324)
 
 ---
 
@@ -43,7 +44,7 @@ Predict human activities in real time via a clean web interface. 🔍📱
 [Dataset Link](https://archive.ics.uci.edu/dataset/240/human+activity+recognition+using+smartphones)
 
 ```bash
-git clone https://github.com/yourusername/your-har-project.git
+git clone https://github.com/sameeerrry/HAR-project.git
 cd your-har-project
 pip install -r requirements.txt
 python app.py
