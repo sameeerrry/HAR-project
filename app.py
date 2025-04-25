@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from utils.preprocess import preprocess_input
 import sklearn
+import random
 
 # Version check (strict)
 assert sklearn.__version__ == '1.6.1', f"Scikit-learn version mismatch: {sklearn.__version__}"
@@ -13,15 +14,15 @@ app = Flask(__name__)
 
 # Load classical ML models
 classical_models = {
-    'decision_tree': joblib.load('models/decision_tree_model.pkl'),
-    'linear_svc': joblib.load('models/linear_svc_model.pkl'),
-    'logistic_regression': joblib.load('models/log_reg_model.pkl'),
-    'rbf_svm': joblib.load('models/rbf_svm_model.pkl'),
-    'random_forest': joblib.load('models/random_forest_model.pkl')
+    'decision_tree': joblib.load('C:/Users/shukl/Downloads/HAR-project/HAR-project/models/decision_tree_model.pkl'),
+    'linear_svc': joblib.load('C:/Users/shukl/Downloads/HAR-project/HAR-project/models/linear_svc_model.pkl'),
+    'logistic_regression': joblib.load('C:/Users/shukl/Downloads/HAR-project/HAR-project/models/log_reg_model.pkl'),
+    'rbf_svm': joblib.load('C:/Users/shukl/Downloads/HAR-project/HAR-project/models/rbf_svm_model.pkl'),
+    'random_forest': joblib.load('C:/Users/shukl/Downloads/HAR-project/HAR-project/models/random_forest_model.pkl')
 }
 
 # Load the best LSTM model
-lstm_model = load_model('models/lstml3_model.h5')
+lstm_model = load_model('C:/Users/shukl/Downloads/HAR-project/HAR-project/models/lstml3_model.h5')
 
 # Map model output to activity label
 label_map = {
@@ -33,9 +34,22 @@ label_map = {
     5: "laying"
 }
 
+# Generate sample input
+
+def generate_sample_input():
+    return np.round(np.random.uniform(-1.0, 1.0, 128 * 9), 3).tolist()
+
 @app.route('/')
 def home():
     return render_template('index.html')
+
+@app.route('/sample_input')
+def sample_input():
+    # Randomly choose between 561 (classical) and 1152 (LSTM) size
+    input_size = random.choice([561, 128 * 9])  # Classical or LSTM
+    sample = [round(random.uniform(-1.0, 1.0), 4) for _ in range(input_size)]
+
+    return jsonify({"features": sample})
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -203,5 +217,5 @@ def predict_csv():
 
     return jsonify(results)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=8080)
