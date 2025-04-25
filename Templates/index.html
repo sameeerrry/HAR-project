@@ -59,7 +59,7 @@
             border-radius: 6px;
             font-size: 1em;
             white-space: pre-wrap;
-            word-break: break-all;
+            word-break: break-word;
         }
         .section {
             margin-bottom: 36px;
@@ -84,6 +84,9 @@
             <form id="form">
                 <label for="data">Sensor Data (JSON array):</label>
                 <textarea id="data" rows="7" placeholder="[0.1, 0.2, ...]"></textarea>
+                <button type="button" onclick="generateLSTMInput()">Sample LSTM Input</button>
+                <button type="button" onclick="generateClassicInput()">Sample Classic Input</button>
+
                 <label for="model">Select Model:</label>
                 <select id="model">
                     <option value="all">All Models</option>
@@ -141,7 +144,7 @@
                 body: JSON.stringify({ features, model })
             });
             const data = await res.json();
-            document.getElementById("results").textContent = 
+            document.getElementById("results").textContent =
                 typeof data === "string" ? data : JSON.stringify(data, null, 2);
         });
 
@@ -162,9 +165,43 @@
                 body: formData
             });
             const data = await res.json();
-            document.getElementById("csvResults").textContent = 
+            document.getElementById("csvResults").textContent =
                 Array.isArray(data) ? data.join('\n') : JSON.stringify(data, null, 2);
         });
+
+        // Fetch and insert sample input
+        document.getElementById("sampleBtn").addEventListener("click", async () => {
+            const res = await fetch("/sample_input");
+            const data = await res.json();
+            document.getElementById("data").value = JSON.stringify(data.features, null, 2);
+        });
+        function generateLSTMInput() {
+    const sequence = [];
+
+    for (let t = 0; t < 128; t++) {
+        const timestep = [];
+        for (let axis = 0; axis < 9; axis++) {
+            // Generate sinusoidal + noise to mimic motion patterns
+            const value = Math.sin((2 * Math.PI * t) / 30 + axis) * 0.5 + (Math.random() - 0.5) * 0.1;
+            timestep.push(+value.toFixed(4));
+        }
+        sequence.push(...timestep); // flatten to 1D
+    }
+
+    document.getElementById("data").value = JSON.stringify(sequence);
+    document.getElementById("model").value = "lstm";
+}
+
+
+function generateClassicInput() {
+    const arr = Array.from({ length: 561 }, () =>
+        +(Math.random() * 2 - 1).toFixed(4)
+    );
+    document.getElementById("data").value = JSON.stringify(arr);
+    // You can optionally set a classical model here
+    document.getElementById("model").value = "random forest";
+}
+
     </script>
 </body>
 </html>
