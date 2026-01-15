@@ -113,6 +113,6 @@ python app.py
 ## 🧠 Credits
 
 - Based on the [UCI HAR Dataset](https://archive.ics.uci.edu/ml/datasets/human+activity+recognition+using+smartphones)
-- Built with ❤️ using Flask, TensorFlow/Keras, scikit-learn, and pandas
+- Built with ❤️ using Flask, TensorFlow/Keras, scikit-learn, and pandas.
 
 ---
